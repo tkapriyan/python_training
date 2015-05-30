@@ -58,12 +58,21 @@ class AddNewContact(unittest.TestCase):
     def logout(self, wd):
         wd.find_element_by_link_text("Logout").click()
     
-    def test_addnewcontact(self):
+    def test_add_new_contact(self):
         wd = self.wd
         self.open_home_page(wd)
         self.login(wd, username="admin", password="secret")
         self.open_contacts_page(wd)
         self.create_new_contact(wd, Contact(first_name="First", last_name="Last", address="Address", home_phone="12345678", mobile_phone="987654321", email="first.last@test.com"))
+        self.return_to_home_page(wd)
+        self.logout(wd)
+
+    def test_add_empty_contact(self):
+        wd = self.wd
+        self.open_home_page(wd)
+        self.login(wd, username="admin", password="secret")
+        self.open_contacts_page(wd)
+        self.create_new_contact(wd, Contact(first_name="", last_name="", address="", home_phone="", mobile_phone="", email=""))
         self.return_to_home_page(wd)
         self.logout(wd)
 
