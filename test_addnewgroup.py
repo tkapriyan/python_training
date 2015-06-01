@@ -1,16 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
-from application import Application
-from group import Group
-
-
-def is_alert_present(wd):
-    try:
-        wd.switch_to_alert().text
-        return True
-    except:
-        return False
-
+from fixture.application import Application
+from model.group import Group
 
 @pytest.fixture
 def app(request):
