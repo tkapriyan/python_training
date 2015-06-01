@@ -1,25 +1,19 @@
-# -*- coding: utf-8 -*-
-import unittest
 from selenium.webdriver.firefox.webdriver import WebDriver
-from contact import Contact
 
 
-def is_alert_present(wd):
-    try:
-        wd.switch_to_alert().text
-        return True
-    except:
-        return False
+class Application:
 
-class AddNewContact(unittest.TestCase):
-    def setUp(self):
+    def __init__(self):
         self.wd = WebDriver()
         self.wd.implicitly_wait(60)
 
-    def open_home_page(self, wd):
+    def open_home_page(self):
+        wd = self.wd
         wd.get("http://localhost/addressbook/")
 
-    def login(self, wd, username, password):
+    def login(self, username, password):
+        wd = self.wd
+        self.open_home_page()
         wd.find_element_by_name("user").click()
         wd.find_element_by_name("user").clear()
         wd.find_element_by_name("user").send_keys(username)
@@ -28,10 +22,43 @@ class AddNewContact(unittest.TestCase):
         wd.find_element_by_name("pass").send_keys(password)
         wd.find_element_by_css_selector("input[type=\"submit\"]").click()
 
-    def open_contacts_page(self, wd):
+    def open_groups_page(self):
+        wd = self.wd
+        wd.find_element_by_link_text("groups").click()
+
+    def create_group(self, group):
+        wd = self.wd
+        self.open_groups_page()
+        # Initiate group creation
+        wd.find_element_by_name("new").click()
+        # Fill out new group form
+        wd.find_element_by_name("group_name").click()
+        wd.find_element_by_name("group_name").clear()
+        wd.find_element_by_name("group_name").send_keys(group.name)
+        wd.find_element_by_name("group_header").click()
+        wd.find_element_by_name("group_header").clear()
+        wd.find_element_by_name("group_header").send_keys(group.header)
+        wd.find_element_by_name("group_footer").click()
+        wd.find_element_by_name("group_footer").clear()
+        wd.find_element_by_name("group_footer").send_keys(group.footer)
+        # Submit group form
+        wd.find_element_by_name("submit").click()
+        # Return to groups page
+        self.return_to_groups_page()
+
+    def return_to_groups_page(self):
+        wd = self.wd
+        wd.find_element_by_link_text("group page").click()
+
+    def open_contacts_page(self):
+        wd = self.wd
         wd.find_element_by_link_text("add new").click()
 
-    def create_new_contact(self, wd, contact):
+    def create_new_contact(self, contact):
+        wd = self.wd
+        # Initiate contact creation
+        self.open_contacts_page()
+        # Fill out new contact form
         wd.find_element_by_name("firstname").click()
         wd.find_element_by_name("firstname").clear()
         wd.find_element_by_name("firstname").send_keys(contact.first_name)
@@ -50,34 +77,19 @@ class AddNewContact(unittest.TestCase):
         wd.find_element_by_name("address").click()
         wd.find_element_by_name("address").clear()
         wd.find_element_by_name("address").send_keys(contact.address)
+        # Submit form
         wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
+        # Return to home page
+        self.return_to_home_page()
 
-    def return_to_home_page(self, wd):
+    def return_to_home_page(self):
+        wd = self.wd
         wd.find_element_by_link_text("home").click()
 
-    def logout(self, wd):
+    def logout(self):
+        wd = self.wd
         wd.find_element_by_link_text("Logout").click()
-    
-    def test_add_new_contact(self):
-        wd = self.wd
-        self.open_home_page(wd)
-        self.login(wd, username="admin", password="secret")
-        self.open_contacts_page(wd)
-        self.create_new_contact(wd, Contact(first_name="First", last_name="Last", address="Address", home_phone="12345678", mobile_phone="987654321", email="first.last@test.com"))
-        self.return_to_home_page(wd)
-        self.logout(wd)
 
-    def test_add_empty_contact(self):
-        wd = self.wd
-        self.open_home_page(wd)
-        self.login(wd, username="admin", password="secret")
-        self.open_contacts_page(wd)
-        self.create_new_contact(wd, Contact(first_name="", last_name="", address="", home_phone="", mobile_phone="", email=""))
-        self.return_to_home_page(wd)
-        self.logout(wd)
-
-    def tearDown(self):
+    def destroy(self):
         self.wd.quit()
 
-if __name__ == '__main__':
-    unittest.main()
