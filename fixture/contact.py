@@ -24,7 +24,7 @@ class ContactHelper:
         wd = self.app.wd
         self.open_contacts_page()
         # Initiate contact modification
-        wd.find_element_by_xpath(" //*[@id='maintable']//tr[5]/td[8]/a").click()
+        wd.find_element_by_css_selector("img[alt=\"Edit\"]").click()
         self.fill_contact_form(contact)
         # Submit modifications
         wd.find_element_by_name("update").click()
@@ -57,3 +57,9 @@ class ContactHelper:
     def return_to_home_page(self):
         wd = self.app.wd
         wd.find_element_by_link_text("home").click()
+
+    def count(self):
+        wd = self.app.wd
+        self.open_contacts_page()
+        return len(wd.find_elements_by_name("selected[]"))
+
