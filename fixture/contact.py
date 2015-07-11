@@ -5,7 +5,8 @@ class ContactHelper:
 
     def open_contacts_page(self):
         wd = self.app.wd
-        wd.find_element_by_link_text("home").click()
+        if not (len(wd.find_elements_by_xpath("//table[@id='maintable']//a[.='Last name']")) > 0):
+            wd.find_element_by_link_text("home").click()
 
     def open_add_contact_form(self):
         wd = self.app.wd
