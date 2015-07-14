@@ -13,8 +13,7 @@ def test_modify_group_name(app):
     old_groups[0] = group
     assert sorted(old_groups, key=Group.id_or_max) == sorted(new_groups, key=Group.id_or_max)
 
-
-
+# Commented out all the tests below as they will be changed in the next task anyways
 
 # def test_modify_group_header(app):
 #     if app.group.count() == 0:
