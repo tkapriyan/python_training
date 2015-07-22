@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from model.contact import Contact
 
-class ContactHelper:
 
+class ContactHelper:
     def __init__(self, app):
         self.app = app
 
@@ -27,15 +27,18 @@ class ContactHelper:
         self.return_to_home_page()
         self.contacts_cache = None
 
-    def modify_first_contact(self, contact):
+    def modify_contact_by_index(self, index, contact):
         wd = self.app.wd
         self.open_contacts_page()
         # Initiate contact modification
-        wd.find_element_by_css_selector("img[alt=\"Edit\"]").click()
+        wd.find_elements_by_css_selector("img[alt=\"Edit\"]")[index].click()
         self.fill_contact_form(contact)
         # Submit modifications
         wd.find_element_by_name("update").click()
         self.contacts_cache = None
+
+    def modify_first_contact(self, contact):
+        self.modify_contact_by_index(0)
 
     def fill_contact_form(self, contact):
         wd = self.app.wd
@@ -53,15 +56,18 @@ class ContactHelper:
             wd.find_element_by_name(field_name).clear()
             wd.find_element_by_name(field_name).send_keys(text)
 
-    def delete_first_contact(self):
+    def delete_contact_by_index(self, index):
         wd = self.app.wd
         self.open_contacts_page()
         # Initiate contact deletion
-        wd.find_element_by_name("selected[]").click()
+        wd.find_elements_by_name("selected[]")[index].click()
         # Submit contact deletion
         wd.find_element_by_xpath("//div[@id='content']/form[2]/div[2]/input").click()
         wd.switch_to_alert().accept()
         self.contacts_cache = None
+
+    def delete_first_contact(self):
+        self.delete_contact_by_index(0)
 
     def return_to_home_page(self):
         wd = self.app.wd
@@ -83,4 +89,3 @@ class ContactHelper:
                 contact_id = element.find_element_by_name("selected[]").get_attribute("value")
                 self.contacts_cache.append(Contact(contact_id=contact_id, first_name=first_name, last_name=last_name))
         return list(self.contacts_cache)
-
