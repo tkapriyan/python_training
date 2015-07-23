@@ -6,7 +6,7 @@ import pytest
 
 
 def random_string(prefix, max_length):
-    symbols = string.ascii_letters + string.digits + string.punctuation + "" * 20
+    symbols = string.ascii_letters + string.digits + string.punctuation + " " * 20
     return prefix + "".join([random.choice(symbols) for i in range(random.randrange(max_length))])
 
 
