@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from model.group import Group
 
+
 class GroupHelper:
     def __init__(self, app):
         self.app = app
@@ -41,6 +42,19 @@ class GroupHelper:
         self.open_groups_page()
         self.select_group_by_index(index)
         # Delete selected group
+        wd.find_element_by_name("delete").click()
+        self.return_to_groups_page()
+        self.groups_cache = None
+
+    def select_group_by_id(self, id):
+        wd = self.app.wd
+        wd.find_element_by_css_selector("input[value='%s']" % id).click()
+
+    def delete_group_by_id(self, id):
+        wd = self.app.wd
+        self.open_groups_page()
+        self.select_group_by_id(id)
+        # submit deletion
         wd.find_element_by_name("delete").click()
         self.return_to_groups_page()
         self.groups_cache = None
