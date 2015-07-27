@@ -12,6 +12,7 @@ class DbFixture:
         self.connection = mysql.connector.connect(host=host, database=name, user=username, password=password)
         self.connection.autocommit = True
 
+
     def get_groups_list(self):
         groups_list = []
         cursor = self.connection.cursor()
@@ -32,6 +33,22 @@ class DbFixture:
             for row in cursor:
                 (contact_id, first_name, last_name) = row
                 contacts_list.append(Contact(contact_id=str(contact_id), first_name=first_name, last_name=last_name))
+        finally:
+            cursor.close()
+            return contacts_list
+
+    def get_full_contacts_list(self):
+        contacts_list = []
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(
+                "select id, firstname, lastname, address, home, mobile, phone2, email, email2, email3 from addressbook where deprecated = '0000-00-00 00:00:00'")
+            for row in cursor:
+                (contact_id, first_name, last_name, address, home, mobile, phone2, email, email2, email3) = row
+                contacts_list.append(
+                    Contact(contact_id=str(contact_id), first_name=first_name, last_name=last_name, address=address,
+                            home_phone=home, mobile_phone=mobile, phone2=phone2, email=email, email2=email2,
+                            email3=email3))
         finally:
             cursor.close()
             return contacts_list

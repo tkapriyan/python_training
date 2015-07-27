@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
 import re
-from random import randrange
+from fixture.contact import Contact
 
 
-def test_home_page_fields(app):
-    home_page_contacts_list = app.contact.get_contacts_list()
-    index = randrange(len(home_page_contacts_list))
-    contact_from_home_page = home_page_contacts_list[index]
-    contact_from_edit_page = app.contact.get_contact_info_from_edit_page(index)
-    assert contact_from_home_page.first_name == contact_from_edit_page.first_name
-    assert contact_from_home_page.last_name == contact_from_edit_page.last_name
-    assert contact_from_home_page.address == contact_from_edit_page.address
-    assert contact_from_home_page.all_phones_from_home_page == merge_phones_like_on_home_page(contact_from_edit_page)
-    assert contact_from_home_page.all_emails_from_home_page == merge_emails_like_on_home_page(contact_from_edit_page)
+def test_home_page_fields(app, db):
+    home_page_contacts_list = map(format_entry, app.contact.get_contacts_list())
+    # home_page_contacts_list = map(format_entry, app.contact.get_contacts_list())
+    db_contacts_list = map(format_entry, db.get_contacts_list())
+    # db_contacts_list = map(format_entry, db.get_contacts_list())
+    assert sorted(home_page_contacts_list, key=Contact.id_or_max) == sorted(db_contacts_list, key=Contact.id_or_max)
 
 
 def clear(s):
@@ -32,3 +28,9 @@ def merge_emails_like_on_home_page(contact):
                             map(lambda x: clear(x),
                                 filter(lambda x: x is not None,
                                        [contact.email, contact.email2, contact.email3]))))
+
+def format_entry(contact):
+        return Contact(contact_id=contact.contact_id, first_name=contact.first_name.strip(),
+                       last_name=contact.last_name.strip(),
+                       all_phones_from_home_page=merge_phones_like_on_home_page(contact),
+                       all_emails_from_home_page=merge_emails_like_on_home_page(contact))
